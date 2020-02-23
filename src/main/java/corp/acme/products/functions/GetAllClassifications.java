@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class GetClassification implements Function<List<String>, List<corp.acme.common.domain.Classification>> {
+public class GetAllClassifications implements Supplier<List<Classification>> {
     @Autowired
     ProductsService productsService;
 
     @Override
-    public List<corp.acme.common.domain.Classification> apply(List<String> names) {
-        return productsService.getClassificationsForNames(names);
+    public List<Classification> get() {
+        return productsService.fetchAllClassifications();
     }
 }

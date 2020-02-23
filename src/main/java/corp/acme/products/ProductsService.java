@@ -34,28 +34,34 @@ public class ProductsService {
         return product;
     }
 
-    public List<Classification> getClassificationsForNames(List<String> substanceNames) {
-        return this.fetchClassifications(substanceNames);
-    }
+
 
     private BigDecimal calculatePremium(Product product) {
         return product.getInsuredValue().multiply(new BigDecimal(product.getFeePrct()));
     }
 
 
-    private Double fetchFeeForProductRequest(ProductRequest productRequest) {
+    public Double fetchFeeForProductRequest(ProductRequest productRequest) {
         URI uri = this.discoveryClient.getInstances("FEES").get(0).getUri();
-        WebClient.RequestHeadersSpec call = ServiceCall.buildDefaultJsonCall(uri, "feeForCategoryId", productRequest);
+        WebClient.RequestHeadersSpec call = ServiceCall.buildDefaultJsonCall(uri, "feeForProductRequest", productRequest);
         return call.retrieve().toEntity(Double.class).block().getBody();
     }
 
 
     // Hm, all these should return these asynchronous Flux thingies..
-    private List<Classification> fetchClassifications(List<String> names){
+    public List<Classification> fetchClassifications(List<String> names){
         URI uri = this.discoveryClient.getInstances("REGULATORY").get(0).getUri();
         WebClient.RequestHeadersSpec call = ServiceCall.buildDefaultJsonCall(uri, "bySubstanceNames", names);
         return call.retrieve().toEntity(List.class).block().getBody();
     }
+
+    public List<Classification> fetchAllClassifications(){
+        URI uri = this.discoveryClient.getInstances("REGULATORY").get(0).getUri();
+        WebClient.RequestHeadersSpec call = ServiceCall.buildDefaultGetCall(uri, "classifications");
+        return call.retrieve().toEntity(List.class).block().getBody();
+    }
+
+
 
 
 //    private Classification fetchClassification(String substanceName) {
